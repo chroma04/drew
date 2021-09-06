@@ -88,7 +88,6 @@ commands =
               restCall $
                 R.CreateMessage (messageChannel m) $ case T.words t of
                   [] -> "<@" <> T.pack (show (m & messageAuthor & userId)) <> "> *gives drew a gentle hug. drew tries his best to hide that they enjoy it a little*"
-                  ["816534200073060352"] -> "*drew is immediately uncomfortable and takes no action, slowly backing away if anything*" -- gltile
                   [a0] ->
                     if isJust (readMaybe $ T.unpack a0 :: Maybe Snowflake)
                       then
