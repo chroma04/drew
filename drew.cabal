@@ -1,0 +1,24 @@
+cabal-version:      2.4
+name:               drew
+version:            0.1.0.0
+
+extra-source-files: CHANGELOG.md
+
+executable drew
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:
+        base,
+        data-default ^>= 0.7.1.1,
+        discord-haskell ^>= 1.8.8,
+        regex-pcre ^>= 0.95.0.0,
+        text ^>= 1.2.4.1,
+        unliftio ^>= 0.2.19,
+        unordered-containers ^>= 0.2.14.0
+    hs-source-dirs:   app
+    default-language: Haskell2010
