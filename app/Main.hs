@@ -133,7 +133,7 @@ eventHandler e = do
           authorId = author & userId
           (prefix, cmdName, cmdArgs) = T.unpack text =~ ("\\s+\\S+($|\\s+)" :: String) :: (String, String, String)
 
-      when (not (author & userIsBot) || not (null cmdName) || prefix =~ ("<@!?" <> show authorId <> ">")) $ do
+      when (not (author & userIsBot) && not (null cmdName) && prefix =~ ("<@!?" <> show (user & userId) <> ">")) $ do
         let channel = m & messageChannel
         case T.filter (/= ' ') (T.pack cmdName) `M.lookup` commands of
           Just cmd ->
