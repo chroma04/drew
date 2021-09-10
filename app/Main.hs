@@ -84,21 +84,31 @@ commands =
       ( "hug",
         def
           { cmdDesc = "NOT AFFECTION; PURELY PRAGMATIC - embrace drew!; [`user_id`] hug a specific user",
-            cmdBody = \m t -> void $
-              restCall $
-                R.CreateMessage (messageChannel m) $ case T.words t of
-                  [] -> "<@" <> T.pack (show (m & messageAuthor & userId)) <> "> *gives drew a gentle hug. drew tries his best to hide that they enjoy it a little*"
-                  ["816534200073060352"] -> "*drew is immediately uncomfortable and takes no action, slowly backing away if anything*" -- gltile
-                  [a0] ->
-                    if isJust (readMaybe $ T.unpack a0 :: Maybe Snowflake)
-                      then
-                        "*drew gives <@" <> a0 <> "> a distant yet desperate hug. it would be nice if they weren't digging his claws into you*\n(REQUESTED BY "
-                          <> (m & messageAuthor & userName)
-                          <> "#"
-                          <> (m & messageAuthor & userDiscrim)
-                          <> ")"
-                      else "`ERR: CAN'T PARSE " <> T.pack (show a0) <> " AS SNOWFLAKE`"
-                  _ -> "`ERR: ARITY MISMATCH (TOO FEW/MANY ARGS)`"
+            cmdBody = \m t -> do
+              Right user <- restCall R.GetCurrentUser
+              void $
+                restCall $
+                  R.CreateMessage (m & messageChannel) $ case T.words t of
+                    [] -> "<@" <> T.pack (show (m & messageAuthor & userId)) <> "> *gives drew a gentle hug. drew tries his best to hide that they enjoy it a little*"
+                    ["816534200073060352"] -> "*drew is immediately uncomfortable and takes no action, slowly backing away if anything*" -- gltile
+                    [a0] ->
+                      -- why can't i use guards outside of a function definition Haskell??
+                      if a0 == T.pack (show (user & userId))
+                        then "*drew awkwardly wraps his arms around themselves with discontent, proving that love of the self is often the most difficult*"
+                        else
+                          if isJust (readMaybe $ T.unpack a0 :: Maybe Snowflake)
+                            then
+                              "*drew gives <@" <> a0 <> "> a distant yet desperate hug. it would be nice if they weren't digging his claws into you*\n(REQUESTED BY "
+                                <> (m & messageAuthor & userName)
+                                <> "#"
+                                <> (m & messageAuthor & userDiscrim)
+                                <> ")"
+                            else
+                              "`ERR: CAN'T PARSE "
+                                <> if (== '`') `T.any` a0
+                                  then "THAT AS SNOWFLAKE. NOW STOP FUCKING AROUND WITH INPUT.`"
+                                  else T.pack (show a0) <> " AS SNOWFLAKE`"
+                    _ -> "`ERR: ARITY MISMATCH (TOO FEW/MANY ARGS)`"
           }
       )
     ]
